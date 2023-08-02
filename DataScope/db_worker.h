@@ -17,7 +17,9 @@ private:
     QSqlDatabase database;  // <=== Error here
 
 public:
-    void connectToDB(const QString hostName, const QString port, const QString user,
+    void setDriverDB(const QString& driverName);
+
+    void connectToDB(const QString hostName, const int port, const QString user,
                      const QString password, const QString dbName);
 
     void connectToDB(const QString path);

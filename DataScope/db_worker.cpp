@@ -11,21 +11,41 @@ DB_worker::~DB_worker()
 
 }
 
-void DB_worker::setDatabase(const QSqlDatabase &newDatabase)
+void DB_worker::setDriverDB(const QString &driverName)
 {
-//    database = newDatabase;
+    database = QSqlDatabase::addDatabase(driverName);
 }
 
-void DB_worker::connectToDB(const QString hostName, const QString port, const QString user,
+void DB_worker::setDatabase(const QSqlDatabase &newDatabase)
+{
+    database = newDatabase;
+}
+
+void DB_worker::connectToDB(const QString hostName, const int port, const QString user,
                             const QString password, const QString dbName)
 {
-    if (database.driverName() != nullptr)
+    database.setHostName(hostName);
+    database.setPort(port);
+    database.setUserName(user);
+    database.setPassword(password);
+    database.setDatabaseName(dbName);
+
+    if (!database.open())
     {
-        qInfo() << database.driverName();
+        qInfo() << "Error connection to DB!";
+    }
+    else
+    {
+        qInfo() << "Succecfully!";
     }
 }
 
 void DB_worker::connectToDB(const QString path)
 {
+    database.setDatabaseName(path);
 
+    if (!database.open())
+    {
+        qInfo() << "Error connection to DB!";
+    }
 }
