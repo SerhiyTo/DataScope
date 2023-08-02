@@ -5,6 +5,7 @@
 #include <QDebug>
 
 #include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
 
 class DB_worker : public QObject
 {
@@ -14,7 +15,7 @@ public:
     ~DB_worker();
 
 private:
-    QSqlDatabase database;  // <=== Error here
+    QSqlDatabase database;
 
 public:
     void setDriverDB(const QString& driverName);
@@ -23,9 +24,6 @@ public:
                      const QString password, const QString dbName);
 
     void connectToDB(const QString path);
-
-
-    void setDatabase(const QSqlDatabase &newDatabase);
 
 signals:
 

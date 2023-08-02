@@ -16,11 +16,6 @@ void DB_worker::setDriverDB(const QString &driverName)
     database = QSqlDatabase::addDatabase(driverName);
 }
 
-void DB_worker::setDatabase(const QSqlDatabase &newDatabase)
-{
-    database = newDatabase;
-}
-
 void DB_worker::connectToDB(const QString hostName, const int port, const QString user,
                             const QString password, const QString dbName)
 {
@@ -48,4 +43,19 @@ void DB_worker::connectToDB(const QString path)
     {
         qInfo() << "Error connection to DB!";
     }
+
+    QSqlQuery q;
+    QString data = "";
+    q.exec("SELECT * FROM leaders");
+
+    while (q.next())
+    {
+        data += q.value(0).toString() + " =:= ";
+        data += q.value(1).toString() + " =:= ";
+        data += q.value(2).toString() + " =:= ";
+        data += q.value(3).toString() + '\n';
+    }
+
+    qInfo() << data;
+    database.close();
 }
