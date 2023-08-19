@@ -3,7 +3,7 @@
 DB_worker::DB_worker(QObject *parent)
     : QObject(parent)
 {
-
+    view = new QTableView;
 }
 
 DB_worker::~DB_worker()
@@ -58,15 +58,15 @@ void DB_worker::showTables()
 
 void DB_worker::showData()
 {
-    QSqlTableModel model;
-    QTableView view;
-
-    QStringList tableName = database.tables();
-    model.setTable(tableName.last());
-    model.select();
-    model.setEditStrategy(QSqlTableModel::OnFieldChange);
-
-    view.setModel(&model);
-    view.resizeColumnsToContents();
-    view.show();
+//    QSqlTableModel model;
+//    model.setTable(QString(database.tables().last()));
+//    model.select();
+//    // model.setEditStrategy(QSqlTableModel::OnFieldChange);
+//    view.setModel(&model);
+//    view.show();
+    auto* model = new QSqlTableModel(view);
+    model->setTable(QString(database.tables().last()));
+    model->select();
+    view->setModel(model);
+    view->show();
 }

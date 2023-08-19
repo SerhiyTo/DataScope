@@ -39,7 +39,9 @@ private:
     QMenu *menuTools;
     QMenu *menuSqlite;
 
-    QTreeWidget *treeWidget;
+    QWidget *centralWidget;
+    QVBoxLayout *layout;
+    QTreeView *treeView;
 
     QString fileSqlPath;
 };

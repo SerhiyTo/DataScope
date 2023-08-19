@@ -26,6 +26,7 @@ public:
 
 private:
     QSqlDatabase database;
+    QTableView* view;
 
 signals:
 

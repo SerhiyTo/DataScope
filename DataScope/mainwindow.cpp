@@ -3,10 +3,13 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    // db_worker.setDriverDB("QPSQL");
-    // db_worker.connectToDB("localhost", 5432, "postgres", "w55w7y4t#$", "postgres");
-    //db_worker.setDriverDB("QSQLITE");
-//    db_worker.connectToDB("Path");
+//    centralWidget = new QWidget(this);
+//    layout = new QVBoxLayout(centralWidget);
+//    treeView = new QTreeView(this);
+
+//    layout->addWidget(centralWidget);
+//    centralWidget->setLayout(layout);
+//    setCentralWidget(centralWidget);
 
     menuBar = new QMenuBar(this);
     menuOpen = new QMenu("Open", this);
@@ -32,7 +35,6 @@ MainWindow::MainWindow(QWidget *parent)
 //    menuConnections->addAction(openQODBC);
 
     this->setCentralWidget(menuBar);
-    treeWidget = new QTreeWidget(this);
 }
 
 MainWindow::~MainWindow()
