@@ -11,14 +11,10 @@ DB_worker::~DB_worker()
 
 }
 
-void DB_worker::setDriverDB(const QString &driverName)
-{
-    database = QSqlDatabase::addDatabase(driverName);
-}
-
-void DB_worker::connectToDB(const QString hostName, const int port, const QString user,
+void DB_worker::connectToDB(const QString& driverName, const QString hostName, const int port, const QString user,
                             const QString password, const QString dbName)
 {
+    database = QSqlDatabase::addDatabase(driverName);
     database.setHostName(hostName);
     database.setPort(port);
     database.setUserName(user);
@@ -35,27 +31,42 @@ void DB_worker::connectToDB(const QString hostName, const int port, const QStrin
     }
 }
 
-void DB_worker::connectToDB(const QString path)
+void DB_worker::connectToDB(const QString& driverName, const QString path)
 {
+    database = QSqlDatabase::addDatabase(driverName);
     database.setDatabaseName(path);
-
     if (!database.open())
     {
-        qInfo() << "Error connection to DB!";
+        qDebug() << "Cannot open database: " << database.lastError();
     }
 
-    QSqlQuery q;
-    QString data = "";
-    q.exec("SELECT * FROM leaders");
+    showTables();
+    showData();
 
-    while (q.next())
-    {
-        data += q.value(0).toString() + " =:= ";
-        data += q.value(1).toString() + " =:= ";
-        data += q.value(2).toString() + " =:= ";
-        data += q.value(3).toString() + '\n';
-    }
-
-    qInfo() << data;
     database.close();
+}
+
+void DB_worker::showTables()
+{
+    qInfo() << "showTables:";
+    QStringList lst = database.tables();
+    foreach(QString str, lst)
+    {
+        qDebug() << "Table: " << str;
+    }
+}
+
+void DB_worker::showData()
+{
+    QSqlTableModel model;
+    QTableView view;
+
+    QStringList tableName = database.tables();
+    model.setTable(tableName.last());
+    model.select();
+    model.setEditStrategy(QSqlTableModel::OnFieldChange);
+
+    view.setModel(&model);
+    view.resizeColumnsToContents();
+    view.show();
 }

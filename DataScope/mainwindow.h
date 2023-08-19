@@ -12,6 +12,12 @@
 
 #include "db_worker.h"
 
+const QMap<QString, QString> map_databases = {
+    {"&MySql", "QMYSQL"},
+    {"&PostgreSql", "QPSQL"},
+    {"&Microsoft SQL Server", "QODBC"}
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

@@ -4,8 +4,11 @@
 #include <QObject>
 #include <QDebug>
 
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlQuery>
+#include <QtSql>
+#include <QSqlQuery>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlTableModel>
 
 class DB_worker : public QObject
 {
@@ -14,16 +17,15 @@ public:
     explicit DB_worker(QObject *parent = nullptr);
     ~DB_worker();
 
+public:
+    void connectToDB(const QString& driverName, const QString hostName, const int port, const QString user,
+                     const QString password, const QString dbName);
+    void connectToDB(const QString& driverName, const QString path);
+    void showTables();
+    void showData();
+
 private:
     QSqlDatabase database;
-
-public:
-    void setDriverDB(const QString& driverName);
-
-    void connectToDB(const QString hostName, const int port, const QString user,
-                     const QString password, const QString dbName);
-
-    void connectToDB(const QString path);
 
 signals:
 
