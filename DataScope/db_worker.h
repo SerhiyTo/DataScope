@@ -21,8 +21,8 @@ public:
     void connectToDB(const QString& driverName, const QString hostName, const int port, const QString user,
                      const QString password, const QString dbName);
     void connectToDB(const QString& driverName, const QString path);
-    void showTables();
-    void showData();
+    QVector<QString> getTables();
+    QSqlTableModel* showData();
 
 private:
     QSqlDatabase database;

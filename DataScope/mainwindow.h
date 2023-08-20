@@ -5,10 +5,12 @@
 #include <QFileDialog>
 #include <QMenuBar>
 #include <QMenu>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QTableView>
+#include <QListWidget>
+#include <QPlainTextEdit>
+#include <QToolBar>
 
 #include "db_worker.h"
 
@@ -40,8 +42,13 @@ private:
     QMenu *menuSqlite;
 
     QWidget *centralWidget;
-    QVBoxLayout *layout;
-    QTreeView *treeView;
+    QVBoxLayout *v_layout;
+    QHBoxLayout *h_layout;
+
+    QPlainTextEdit *txtRequest;
+    QToolBar *toolWithDB;
+    QTableView *tableViewer;
+    QListWidget *listWithTables;
 
     QString fileSqlPath;
 };

@@ -40,23 +40,24 @@ void DB_worker::connectToDB(const QString& driverName, const QString path)
         qDebug() << "Cannot open database: " << database.lastError();
     }
 
-    showTables();
+//    showTables();
     showData();
 
     database.close();
 }
 
-void DB_worker::showTables()
+QVector<QString> DB_worker::getTables()
 {
-    qInfo() << "showTables:";
-    QStringList lst = database.tables();
-    foreach(QString str, lst)
+    QVector<QString> listWithTables;  // Crete variable for store all tables' names
+    QStringList lst = database.tables(); // Get all tables' names
+    foreach(QString item, lst)
     {
-        qDebug() << "Table: " << str;
+        listWithTables.append(item);
     }
+    return listWithTables;
 }
 
-void DB_worker::showData()
+QSqlTableModel* DB_worker::showData()
 {
 //    QSqlTableModel model;
 //    model.setTable(QString(database.tables().last()));
@@ -67,6 +68,7 @@ void DB_worker::showData()
     auto* model = new QSqlTableModel(view);
     model->setTable(QString(database.tables().last()));
     model->select();
-    view->setModel(model);
-    view->show();
+//    view->setModel(model);
+//    view->show();
+    return model;
 }
