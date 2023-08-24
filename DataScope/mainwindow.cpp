@@ -23,6 +23,15 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *openSqlite = new QAction (tr("&SQLite"), this);
     connect(openSqlite, &QAction::triggered, this, &MainWindow::openSqlite);
 
+    actionSumbit = new QAction(tr("&Submit") ,this);
+    actionBack = new QAction(tr("&Reject"), this);
+    connect(actionSumbit, &QAction::triggered, this, &MainWindow::sumbitRequest);
+    connect(actionBack, &QAction::triggered, this, &MainWindow::rejectRequest);
+    actionSumbit->setIcon(QIcon(":/iconOK.png"));
+    actionBack->setIcon(QIcon(":/iconNo.png"));
+    toolWithDB->addAction(actionSumbit);
+    toolWithDB->addAction(actionBack);
+
     menuBar->addMenu(menuOpen);
     menuBar->addMenu(menuConnections);
     menuBar->addMenu(menuTools);
@@ -47,10 +56,20 @@ MainWindow::MainWindow(QWidget *parent)
     QWidget *centralWidget = new QWidget(this);
     centralWidget->setLayout(h_layout);
     setCentralWidget(centralWidget);
+
+    connect(listWithTables, &QListWidget::itemClicked, this, &MainWindow::openCurrentTable);
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::showTables()
+{
+    foreach (const QString& item, db_worker.getTables())
+    {
+        listWithTables->addItem(item);
+    }
 }
 
 void MainWindow::openSql()
@@ -62,18 +81,29 @@ void MainWindow::openSql()
     db_worker.connectToDB(map_databases.value(action->text()), fileSqlPath);
 }
 
+void MainWindow::openCurrentTable()
+{
+    QString tableName = listWithTables->currentItem()->text();
+    tableViewer->setModel(db_worker.showData(tableName));
+    tableViewer->resizeColumnsToContents();
+    tableViewer->show();
+}
+
+void MainWindow::sumbitRequest()
+{
+    db_worker.sumbit();
+}
+
+void MainWindow::rejectRequest()
+{
+    db_worker.reject();
+}
+
 void MainWindow::openSqlite()
 {
     fileSqlPath = QFileDialog::getOpenFileName(this, "Open", QString(), "All files(*.*);;DB (*.db)");
     if (fileSqlPath.isEmpty()) return;
     db_worker.connectToDB("QSQLITE", fileSqlPath);
-    tableViewer->setModel(db_worker.showData());
-    tableViewer->resizeColumnsToContents();
-    tableViewer->show();
-
-    foreach (QString item, db_worker.getTables())
-    {
-        listWithTables->addItem(item);
-    }
+    showTables();
 }
 

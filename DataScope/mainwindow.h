@@ -14,7 +14,7 @@
 
 #include "db_worker.h"
 
-const QMap<QString, QString> map_databases = {
+static const QMap<QString, QString> map_databases = {
     {"&MySql", "QMYSQL"},
     {"&PostgreSql", "QPSQL"},
     {"&Microsoft SQL Server", "QODBC"}
@@ -28,9 +28,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void showTables();
+
 private slots:
     void openSqlite();
     void openSql();
+    void openCurrentTable();
+    void sumbitRequest();
+    void rejectRequest();
 
 private:
     DB_worker db_worker;
@@ -40,6 +45,9 @@ private:
     QMenu *menuConnections;
     QMenu *menuTools;
     QMenu *menuSqlite;
+
+    QAction *actionSumbit;
+    QAction *actionBack;
 
     QWidget *centralWidget;
     QVBoxLayout *v_layout;

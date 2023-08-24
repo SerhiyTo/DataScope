@@ -10,6 +10,8 @@
 #include <QSqlQueryModel>
 #include <QSqlTableModel>
 
+#include <QMessageBox>
+
 class DB_worker : public QObject
 {
     Q_OBJECT
@@ -21,12 +23,16 @@ public:
     void connectToDB(const QString& driverName, const QString hostName, const int port, const QString user,
                      const QString password, const QString dbName);
     void connectToDB(const QString& driverName, const QString path);
+    void disconnectFromDB();
     QVector<QString> getTables();
-    QSqlTableModel* showData();
+    QSqlTableModel* showData(const QString& tableName);
+    void sumbit();
+    void reject();
 
 private:
     QSqlDatabase database;
     QTableView* view;
+    QSqlTableModel* model;
 
 signals:
 

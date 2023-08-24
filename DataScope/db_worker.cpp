@@ -39,36 +39,41 @@ void DB_worker::connectToDB(const QString& driverName, const QString path)
     {
         qDebug() << "Cannot open database: " << database.lastError();
     }
-
-//    showTables();
-    showData();
-
-    database.close();
 }
 
 QVector<QString> DB_worker::getTables()
 {
     QVector<QString> listWithTables;  // Crete variable for store all tables' names
-    QStringList lst = database.tables(); // Get all tables' names
-    foreach(QString item, lst)
+    foreach(QString item, database.tables())
     {
         listWithTables.append(item);
     }
     return listWithTables;
 }
 
-QSqlTableModel* DB_worker::showData()
+QSqlTableModel* DB_worker::showData(const QString& tableName)
 {
-//    QSqlTableModel model;
-//    model.setTable(QString(database.tables().last()));
-//    model.select();
-//    // model.setEditStrategy(QSqlTableModel::OnFieldChange);
-//    view.setModel(&model);
-//    view.show();
-    auto* model = new QSqlTableModel(view);
-    model->setTable(QString(database.tables().last()));
+    model = new QSqlTableModel(view);  // Create new QSqlTableModel
+    model->setTable(tableName);  // Set th
     model->select();
-//    view->setModel(model);
-//    view->show();
+    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     return model;
+}
+
+void DB_worker::sumbit()
+{
+    model->submitAll();
+}
+
+void DB_worker::reject()
+{
+    model->revertAll();
+}
+
+void DB_worker::disconnectFromDB()
+{
+    if (database.isOpen())
+    {
+        database.close();
+    }
 }
