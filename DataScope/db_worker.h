@@ -4,7 +4,13 @@
 #include <QObject>
 #include <QDebug>
 
-#include <QtSql/QSqlDatabase>
+#include <QtSql>
+#include <QSqlQuery>
+#include <QTableView>
+#include <QSqlQueryModel>
+#include <QSqlTableModel>
+
+#include <QMessageBox>
 
 class DB_worker : public QObject
 {
@@ -13,19 +19,20 @@ public:
     explicit DB_worker(QObject *parent = nullptr);
     ~DB_worker();
 
-private:
-    QSqlDatabase database;  // <=== Error here
-
 public:
-    void setDriverDB(const QString& driverName);
-
-    void connectToDB(const QString hostName, const int port, const QString user,
+    void connectToDB(const QString& driverName, const QString hostName, const int port, const QString user,
                      const QString password, const QString dbName);
+    void connectToDB(const QString& driverName, const QString path);
+    void disconnectFromDB();
+    QVector<QString> getTables();
+    QSqlTableModel* showData(const QString& tableName);
+    void sumbit();
+    void reject();
 
-    void connectToDB(const QString path);
-
-
-    void setDatabase(const QSqlDatabase &newDatabase);
+private:
+    QSqlDatabase database;
+    QTableView* view;
+    QSqlTableModel* model;
 
 signals:
 

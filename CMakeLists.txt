@@ -19,6 +19,7 @@ set(PROJECT_SOURCES
         DataScope/mainwindow.h
         DataScope/db_worker.cpp
         DataScope/db_worker.h
+        DataScope/graphics/graphics.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
