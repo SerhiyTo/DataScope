@@ -11,6 +11,8 @@
 #include <QListWidget>
 #include <QPlainTextEdit>
 #include <QToolBar>
+#include <QSqlQueryModel>
+#include <QSortFilterProxyModel>
 
 #include "db_worker.h"
 
@@ -36,6 +38,9 @@ private slots:
     void openCurrentTable();
     void sumbitRequest();
     void rejectRequest();
+    void changeIcons();
+    void playSqlQuery();
+    void changeEnabledPlay();
 
 private:
     DB_worker db_worker;
@@ -46,8 +51,11 @@ private:
     QMenu *menuTools;
     QMenu *menuSqlite;
 
+    QSqlQueryModel* model;
+
     QAction *actionSumbit;
     QAction *actionBack;
+    QAction *actionRun;
 
     QWidget *centralWidget;
     QVBoxLayout *v_layout;
@@ -55,6 +63,7 @@ private:
 
     QPlainTextEdit *txtRequest;
     QToolBar *toolWithDB;
+    QToolBar *toolWithRequest;
     QTableView *tableViewer;
     QListWidget *listWithTables;
 

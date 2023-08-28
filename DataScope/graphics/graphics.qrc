@@ -3,5 +3,9 @@
         <file>graphics.qrc</file>
         <file>iconNo.png</file>
         <file>iconOK.png</file>
+        <file>iconNo_disenabled.png</file>
+        <file>iconOK_disenabled.png</file>
+        <file>iconPlay.png</file>
+        <file>iconPlay_disenabled.png</file>
     </qresource>
 </RCC>
