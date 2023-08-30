@@ -7,5 +7,6 @@
         <file>iconOK_disenabled.png</file>
         <file>iconPlay.png</file>
         <file>iconPlay_disenabled.png</file>
+        <file>iconDelete.png</file>
     </qresource>
 </RCC>
