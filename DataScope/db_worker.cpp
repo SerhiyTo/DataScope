@@ -54,7 +54,7 @@ QVector<QString> DB_worker::getTables()
 QSqlTableModel* DB_worker::showData(const QString& tableName)
 {
     model = new QSqlTableModel(view);  // Create new QSqlTableModel
-    model->setTable(tableName);  // Set th
+    model->setTable(tableName);  // Set the table to model
     model->select();
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     return model;
@@ -78,6 +78,21 @@ void DB_worker::deleteRow(int index)
 void DB_worker::addRow()
 {
     model->insertRow(model->rowCount(QModelIndex()));
+}
+
+QSqlRecord DB_worker::record(int index)
+{
+    return model->record(index);
+}
+
+int DB_worker::getRowsCount() const
+{
+    return model->rowCount();
+}
+
+int DB_worker::getColumnsCount() const
+{
+    return model->columnCount();
 }
 
 void DB_worker::disconnectFromDB()

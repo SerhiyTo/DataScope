@@ -30,6 +30,9 @@ public:
     void reject();
     void deleteRow(int index);
     void addRow();
+    QSqlRecord record(int index);
+    int getRowsCount() const;
+    int getColumnsCount() const;
 
 private:
     QSqlDatabase database;

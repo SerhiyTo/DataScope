@@ -13,6 +13,7 @@
 #include <QToolBar>
 #include <QSqlQueryModel>
 #include <QSortFilterProxyModel>
+#include <QJsonObject>
 
 #include "db_worker.h"
 #include "syntaxhighlighter.h"
@@ -44,6 +45,7 @@ private slots:
     void changeEnabledPlay();
     void addRecord();
     void deleteRecord();
+    void saveDataToJson();
 
 private:
     DB_worker db_worker;
@@ -61,6 +63,7 @@ private:
     QAction *actionRun;
     QAction *actionAddRecord;
     QAction *actionDeleteRecord;
+    QAction *actionSaveInJson;
 
     QWidget *centralWidget;
     QVBoxLayout *v_layout;
