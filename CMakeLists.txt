@@ -19,6 +19,8 @@ set(PROJECT_SOURCES
         DataScope/mainwindow.h
         DataScope/db_worker.cpp
         DataScope/db_worker.h
+        DataScope/syntaxhighlighter.cpp
+        DataScope/syntaxhighlighter.h
         DataScope/graphics/graphics.qrc
 )
 

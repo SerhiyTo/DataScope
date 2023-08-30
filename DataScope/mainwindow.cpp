@@ -3,72 +3,123 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    txtRequest = new QPlainTextEdit(this);
-    txtRequest->setMaximumHeight(250);
+    txtRequest = new QTextEdit(this);  // Create QTextEdit for input the SQL query
+    txtRequest->setMaximumHeight(200);  // Set minimum height for our QTextEdit
+    QFont font = txtRequest->font();  // Get font
+    font.setPointSize(12);  // Set font size
+    txtRequest->setFont(font);  // update font
+    m_Highligter = new SyntaxHighlighter(txtRequest->document());  // include syntax highligter
+    connect(txtRequest, &QTextEdit::textChanged, this, &MainWindow::changeEnabledPlay);  // Connect function for change status
+                                                                                         // button, when text were changed
 
-    v_layout = new QVBoxLayout(this);
-    h_layout = new QHBoxLayout(this);
+    v_layout = new QVBoxLayout;  // Create new vertical box layout
+    h_layout = new QHBoxLayout;  // Create new horizontal box layout
 
-    tableViewer = new QTableView(this);
-    listWithTables = new QListWidget(this);
+    tableViewer = new QTableView(this);  // Create new table for output data from database
+    connect(tableViewer, &QTableView::doubleClicked, this, &MainWindow::changeIcons);  // Connect function for change status,
+                                                                                       // when would be mouse double click
 
-    toolWithDB = new QToolBar(this);
-    toolWithDB->setMovable(false);
+    listWithTables = new QListWidget(this);  // Create new QListWidget for output tables in our database
+    listWithTables->setMaximumWidth(250);  // Set maximum width for this widget
+    connect(listWithTables, &QListWidget::itemClicked, this, &MainWindow::openCurrentTable);  // Connect function for open
+                                                                                              // current table, that was selected
 
-    menuBar = new QMenuBar(this);
-    menuOpen = new QMenu("Open", this);
-    menuConnections = new QMenu("Connections", this);
-    menuTools = new QMenu("Tools", this);
+    toolWithDB = new QToolBar(this);  // Create new QToolBar with actions: submit, reject changed in tables, ...
+    toolWithDB->setMovable(false);  // Block movable
 
-    QAction *openSqlite = new QAction (tr("&SQLite"), this);
-    connect(openSqlite, &QAction::triggered, this, &MainWindow::openSqlite);
+    toolWithRequest = new QToolBar(this);  // Create new QToolBar with actions: run our sql query, ...
+    toolWithRequest->setMovable(false);  // Block movable
 
-    actionSumbit = new QAction(tr("&Submit") ,this);
-    actionBack = new QAction(tr("&Reject"), this);
-    connect(actionSumbit, &QAction::triggered, this, &MainWindow::sumbitRequest);
-    connect(actionBack, &QAction::triggered, this, &MainWindow::rejectRequest);
+    menuBar = new QMenuBar(this);  // Create new QMenuBar with actions: connect to database, open file with query, tools...
+    this->setMenuBar(menuBar);  // Set menu bar for our application
+
+    menuOpen = new QMenu("Open", this);  // Create new QMenu for open file with query
+    menuConnections = new QMenu("Connections", this);  // Create new QMenu for connect with our database
+    menuTools = new QMenu("Tools", this);  // Create new QMenu for tools
+
+    QAction *openSqlite = new QAction (tr("&SQLite"), this);  // Create action for connect to sqlite
+    connect(openSqlite, &QAction::triggered, this, &MainWindow::openSqlite);  // Open function for connect to sqlite,
+                                                                              // when button was clicked
+
+
+    actionSumbit = new QAction(tr("&Submit") ,this);  // Create new action for Submit changes in table
+    actionBack = new QAction(tr("&Reject"), this);  // Create new action for Cancel changes in tab;e
+    actionRun = new QAction(tr("&Run"), this);  // Create neww action for run SQL-query
+
+    // Set hints for our actions
+    actionSumbit->setToolTip("Commit table changes");
+    actionBack->setToolTip("Cancel table changes");
+    actionRun->setToolTip("Run SQL-query");
+
+    // Set icons for our actions
     actionSumbit->setIcon(QIcon(":/iconOK.png"));
     actionBack->setIcon(QIcon(":/iconNo.png"));
+    actionRun->setIcon(QIcon(":/iconPlay.png"));
+
+    // Set buttons disenabled
+    actionSumbit->setEnabled(false);
+    actionBack->setEnabled(false);
+    actionRun->setEnabled(false);
+
+    // Connect actions' signals with slots
+    connect(actionSumbit, &QAction::triggered, this, &MainWindow::sumbitRequest);
+    connect(actionBack, &QAction::triggered, this, &MainWindow::rejectRequest);
+    connect(actionRun, &QAction::triggered, this, &MainWindow::playSqlQuery);
+
+
+    model = new QSqlQueryModel(this);  // Create model for passing to it data from SQL-query in txtRequest
+
+    // Add actions
     toolWithDB->addAction(actionSumbit);
     toolWithDB->addAction(actionBack);
+    toolWithRequest->addAction(actionRun);
 
+    // Add menu to QMenuBar
     menuBar->addMenu(menuOpen);
     menuBar->addMenu(menuConnections);
     menuBar->addMenu(menuTools);
 
+    // Add action to QMenu
     menuConnections->addAction(openSqlite);
 
-    this->setMenuBar(menuBar);
-
-    // tableViewer->setMinimumSize(500, 500);
-
+    // Add all our widget to vertical box layout
+    v_layout->addWidget(toolWithRequest);
     v_layout->addWidget(txtRequest);
     v_layout->addWidget(toolWithDB);
     v_layout->addWidget(tableViewer);
 
-    listWithTables->setMaximumWidth(250);
-    // listWithTables->setMinimumHeight(500);
-
-    // h_layout->addWidget(tableViewer);
+    // Add other widgets to horizontal box layout
     h_layout->addWidget(listWithTables);
     h_layout->addLayout(v_layout);
 
-    QWidget *centralWidget = new QWidget(this);
-    centralWidget->setLayout(h_layout);
-    setCentralWidget(centralWidget);
-
-    connect(listWithTables, &QListWidget::itemClicked, this, &MainWindow::openCurrentTable);
+    QWidget *centralWidget = new QWidget(this);  // Create new centralWidget
+    centralWidget->setLayout(h_layout);  // Set our horizontal layout as main layout in this widget
+    setCentralWidget(centralWidget);  // Set our centralWidget, as central widget our app
 }
 
 MainWindow::~MainWindow()
 {
+    delete txtRequest;
+    delete v_layout;
+    delete h_layout;
+    delete tableViewer;
+    delete listWithTables;
+    delete toolWithDB;
+    delete toolWithRequest;
+    delete menuBar;
+    delete menuOpen;
+    delete menuConnections;
+    delete menuTools;
+    delete actionSumbit;
+    delete actionBack;
+    delete actionRun;
 }
 
 void MainWindow::showTables()
 {
     foreach (const QString& item, db_worker.getTables())
     {
-        listWithTables->addItem(item);
+        listWithTables->addItem(item);  // Add every table to our list with table
     }
 }
 
@@ -86,17 +137,48 @@ void MainWindow::openCurrentTable()
     QString tableName = listWithTables->currentItem()->text();
     tableViewer->setModel(db_worker.showData(tableName));
     tableViewer->resizeColumnsToContents();
+    tableViewer->setSortingEnabled(true);
     tableViewer->show();
 }
 
 void MainWindow::sumbitRequest()
 {
     db_worker.sumbit();
+    actionSumbit->setEnabled(false);
+    actionBack->setEnabled(false);
 }
 
 void MainWindow::rejectRequest()
 {
     db_worker.reject();
+    actionSumbit->setEnabled(false);
+    actionBack->setEnabled(false);
+}
+
+void MainWindow::changeIcons()
+{
+    actionSumbit->setEnabled(true);
+    actionBack->setEnabled(true);
+}
+
+void MainWindow::playSqlQuery()
+{
+    model->setQuery(txtRequest->toPlainText());
+    if (model->lastError().isValid())
+    {
+        QMessageBox::critical(this,
+                              "Error",
+                              model->lastError().text());
+    }
+    tableViewer->setModel(model);
+    tableViewer->setSortingEnabled(true);
+    tableViewer->show();
+}
+
+void MainWindow::changeEnabledPlay()
+{
+    // Set our action run enabled if our txtRequest is not empty and tables in our listWithTables more than 0
+    actionRun->setEnabled(!txtRequest->toPlainText().isEmpty() && listWithTables->count() > 0);
 }
 
 void MainWindow::openSqlite()

@@ -9,10 +9,13 @@
 #include <QVBoxLayout>
 #include <QTableView>
 #include <QListWidget>
-#include <QPlainTextEdit>
+#include <QTextEdit>
 #include <QToolBar>
+#include <QSqlQueryModel>
+#include <QSortFilterProxyModel>
 
 #include "db_worker.h"
+#include "syntaxhighlighter.h"
 
 static const QMap<QString, QString> map_databases = {
     {"&MySql", "QMYSQL"},
@@ -36,6 +39,9 @@ private slots:
     void openCurrentTable();
     void sumbitRequest();
     void rejectRequest();
+    void changeIcons();
+    void playSqlQuery();
+    void changeEnabledPlay();
 
 private:
     DB_worker db_worker;
@@ -46,15 +52,21 @@ private:
     QMenu *menuTools;
     QMenu *menuSqlite;
 
+    QSqlQueryModel *model;
+
     QAction *actionSumbit;
     QAction *actionBack;
+    QAction *actionRun;
 
     QWidget *centralWidget;
     QVBoxLayout *v_layout;
     QHBoxLayout *h_layout;
 
-    QPlainTextEdit *txtRequest;
+    QTextEdit *txtRequest;
+    QSyntaxHighlighter *m_Highligter;
+
     QToolBar *toolWithDB;
+    QToolBar *toolWithRequest;
     QTableView *tableViewer;
     QListWidget *listWithTables;
 
