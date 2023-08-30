@@ -42,6 +42,8 @@ private slots:
     void changeIcons();
     void playSqlQuery();
     void changeEnabledPlay();
+    void addRecord();
+    void deleteRecord();
 
 private:
     DB_worker db_worker;
@@ -57,6 +59,8 @@ private:
     QAction *actionSumbit;
     QAction *actionBack;
     QAction *actionRun;
+    QAction *actionAddRecord;
+    QAction *actionDeleteRecord;
 
     QWidget *centralWidget;
     QVBoxLayout *v_layout;

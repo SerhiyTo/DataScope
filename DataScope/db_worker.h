@@ -28,6 +28,8 @@ public:
     QSqlTableModel* showData(const QString& tableName);
     void sumbit();
     void reject();
+    void deleteRow(int index);
+    void addRow();
 
 private:
     QSqlDatabase database;

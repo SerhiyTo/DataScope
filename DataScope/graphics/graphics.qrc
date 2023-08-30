@@ -8,5 +8,6 @@
         <file>iconPlay.png</file>
         <file>iconPlay_disenabled.png</file>
         <file>iconDelete.png</file>
+        <file>iconAdd.png</file>
     </qresource>
 </RCC>

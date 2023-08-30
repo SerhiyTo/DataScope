@@ -70,6 +70,16 @@ void DB_worker::reject()
     model->revertAll();
 }
 
+void DB_worker::deleteRow(int index)
+{
+    model->removeRow(index);
+}
+
+void DB_worker::addRow()
+{
+    model->insertRow(model->rowCount(QModelIndex()));
+}
+
 void DB_worker::disconnectFromDB()
 {
     if (database.isOpen())
