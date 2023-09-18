@@ -57,7 +57,10 @@ void SyntaxHighlighter::highlightBlock(const QString &str)
         {
             if (str.at(i).isNumber())
             {
-                setFormat(i, 1, Qt::cyan);
+                QTextCharFormat format;
+                format.setFontWeight(QFont::Bold);
+                format.setForeground(QColor("#f74c02"));
+                setFormat(i, 1, format);
             }
             else if (str.mid(i, 2) == "/*")
             {
@@ -66,11 +69,27 @@ void SyntaxHighlighter::highlightBlock(const QString &str)
             }
             else
             {
-                QString strKeyword = getKeyword(i, str);
-                if (!strKeyword.isEmpty())
+                bool isKeyword = false;
+                foreach (const QString &strKeyword, m_lstKeywords)
                 {
-                    setFormat(i, strKeyword.length(), Qt::blue);
-                    i += strKeyword.length() - 1;
+                    if (str.mid(i, strKeyword.length()).toUpper() == strKeyword.toUpper())
+                    {
+                        QTextCharFormat format;
+                        format.setFontWeight(QFont::Bold);
+                        format.setForeground(QColor("#3F15FD"));
+                        setFormat(i, strKeyword.length(), format);
+                        i += strKeyword.length() - 1;
+                        isKeyword = true;
+                        break;
+                    }
+                }
+                if (!isKeyword)
+                {
+                    QTextCharFormat format;
+                    format.setFontItalic(true);
+                    format.setFontWeight(QFont::Bold);
+                    // format.setForeground(QColor("#800080"));
+                    setFormat(i, str.length(), format);
                 }
             }
         }
