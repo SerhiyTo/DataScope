@@ -45,33 +45,50 @@ MainWindow::MainWindow(QWidget *parent)
     actionSumbit = new QAction(tr("&Submit") ,this);  // Create new action for Submit changes in table
     actionBack = new QAction(tr("&Reject"), this);  // Create new action for Cancel changes in tab;e
     actionRun = new QAction(tr("&Run"), this);  // Create neww action for run SQL-query
+    actionAddRecord = new QAction(tr("&Add"), this);
+    actionDeleteRecord = new QAction(tr("&Delete"), this);
+    actionSaveInJson = new QAction(tr("&Save"), this);
 
     // Set hints for our actions
     actionSumbit->setToolTip("Commit table changes");
     actionBack->setToolTip("Cancel table changes");
     actionRun->setToolTip("Run SQL-query");
+    actionAddRecord->setToolTip("Add new record to table");
+    actionDeleteRecord->setToolTip("Delete record from table");
+    actionSaveInJson->setToolTip("Save data from tables to JSON format");
 
     // Set icons for our actions
     actionSumbit->setIcon(QIcon(":/iconOK.png"));
     actionBack->setIcon(QIcon(":/iconNo.png"));
     actionRun->setIcon(QIcon(":/iconPlay.png"));
+    actionAddRecord->setIcon(QIcon(":/iconAdd.png"));
+    actionDeleteRecord->setIcon(QIcon(":/iconDelete.png"));
+    actionSaveInJson->setIcon(QIcon(":/iconSave.png"));
 
     // Set buttons disenabled
     actionSumbit->setEnabled(false);
     actionBack->setEnabled(false);
     actionRun->setEnabled(false);
+    actionAddRecord->setEnabled(false);
+    actionDeleteRecord->setEnabled(false);
+    actionSaveInJson->setEnabled(false);
 
     // Connect actions' signals with slots
     connect(actionSumbit, &QAction::triggered, this, &MainWindow::sumbitRequest);
     connect(actionBack, &QAction::triggered, this, &MainWindow::rejectRequest);
     connect(actionRun, &QAction::triggered, this, &MainWindow::playSqlQuery);
-
+    connect(actionAddRecord, &QAction::triggered, this, &MainWindow::addRecord);
+    connect(actionDeleteRecord, &QAction::triggered, this, &MainWindow::deleteRecord);
+    connect(actionSaveInJson, &QAction::triggered, this, &MainWindow::saveDataToJson);
 
     model = new QSqlQueryModel(this);  // Create model for passing to it data from SQL-query in txtRequest
 
     // Add actions
     toolWithDB->addAction(actionSumbit);
     toolWithDB->addAction(actionBack);
+    toolWithDB->addAction(actionAddRecord);
+    toolWithDB->addAction(actionDeleteRecord);
+    toolWithDB->addAction(actionSaveInJson);
     toolWithRequest->addAction(actionRun);
 
     // Add menu to QMenuBar
@@ -113,6 +130,9 @@ MainWindow::~MainWindow()
     delete actionSumbit;
     delete actionBack;
     delete actionRun;
+    delete actionAddRecord;
+    delete actionDeleteRecord;
+    delete actionSaveInJson;
 }
 
 void MainWindow::showTables()
@@ -134,8 +154,12 @@ void MainWindow::openSql()
 
 void MainWindow::openCurrentTable()
 {
-    QString tableName = listWithTables->currentItem()->text();
-    tableViewer->setModel(db_worker.showData(tableName));
+    actionAddRecord->setEnabled(true);
+    actionDeleteRecord->setEnabled(true);
+    actionSaveInJson->setEnabled(true);
+
+    QString tableName = listWithTables->currentItem()->text();  // Get name of selected item in list widget
+    tableViewer->setModel(db_worker.showData(tableName));  // Open table with selected item
     tableViewer->resizeColumnsToContents();
     tableViewer->setSortingEnabled(true);
     tableViewer->show();
@@ -179,6 +203,48 @@ void MainWindow::changeEnabledPlay()
 {
     // Set our action run enabled if our txtRequest is not empty and tables in our listWithTables more than 0
     actionRun->setEnabled(!txtRequest->toPlainText().isEmpty() && listWithTables->count() > 0);
+}
+
+void MainWindow::addRecord()
+{
+    db_worker.addRow();
+    changeIcons();
+}
+
+void MainWindow::deleteRecord()
+{
+    QModelIndexList selectedItem = tableViewer->selectionModel()->selectedIndexes();
+    if (selectedItem.isEmpty())
+    {
+        QMessageBox::critical(this,
+                              "Error",
+                              "You didn't selected any row!");
+        return;
+    }
+    QModelIndex index = selectedItem.at(0);
+    db_worker.deleteRow(index.row());
+    changeIcons();
+}
+
+void MainWindow::saveDataToJson()
+{
+    QFile file(QString(listWithTables->currentItem()->text()) + ".json");
+    file.open(QIODevice::WriteOnly);
+    QJsonArray jsonArray;
+
+    for (int nRow = 0; nRow < db_worker.getRowsCount(); ++nRow)
+    {
+        QSqlRecord rec = db_worker.record(nRow);
+        QJsonObject recordObj;
+        for (int nCol = 0; nCol < db_worker.getColumnsCount(); ++nCol)
+        {
+            recordObj.insert(rec.fieldName(nCol), QJsonValue::fromVariant(rec.value(nCol)));
+        }
+        jsonArray.append(recordObj);
+    }
+
+    file.write(QJsonDocument(jsonArray).toJson());
+    file.close();
 }
 
 void MainWindow::openSqlite()
